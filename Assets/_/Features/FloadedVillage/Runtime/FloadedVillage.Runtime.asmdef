@@ -1,0 +1,16 @@
+{
+    "name": "FloadedVillage",
+    "rootNamespace": "FloadedVillage.Runtime",
+    "references": [
+        "GUID:1dc127baa0ef826469562c95d8160700"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
