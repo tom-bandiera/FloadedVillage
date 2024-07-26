@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -10,7 +11,7 @@ namespace GridManager.Runtime
         #region Publics
         
         public Tilemap m_environmentTilemap;
-        public int[,] m_initialLevelTiles;
+        public EnumTile.TYPE[,] m_initialLevelTiles;
 
         #endregion
 
@@ -30,7 +31,7 @@ namespace GridManager.Runtime
         {
             int numRows = _bounds.size.y;
             int numCols = _bounds.size.x;
-            m_initialLevelTiles = new int[numRows, numCols];
+            m_initialLevelTiles = new EnumTile.TYPE[numRows, numCols];
 
             for (int y = 0; y < numRows; y++)
             {
@@ -40,13 +41,13 @@ namespace GridManager.Runtime
 
                     TileBase tilemapTile = m_environmentTilemap.GetTile(cellPosition);
 
-                    int tileValue = GetTileValue(tilemapTile);
+                    EnumTile.TYPE tileValue = GetTileValue(tilemapTile.name);
 
                     m_initialLevelTiles[y, x] = tileValue;
                 }
             }
             
-            // PrintArray();
+            PrintArray();
         }
 
         #endregion
@@ -77,27 +78,42 @@ namespace GridManager.Runtime
             }
         }
 
-        private int GetTileValue(TileBase tile)
+        private EnumTile.TYPE GetTileValue(string tileName)
         {
-            switch (tile.name)
+            switch (tileName)
             {
                 case "empty":
-                    return 0;
+                    return EnumTile.TYPE.EMPTY;
                     
                 case "water":
-                    return 1;
+                    return EnumTile.TYPE.WATER;
 
                 case "sand":
-                    return 2;
+                    return EnumTile.TYPE.SAND;
 
                 case "seeds":
-                    return 3;
+                    return EnumTile.TYPE.SEEDS;
 
                 case "crops":
-                    return 4;
+                    return EnumTile.TYPE.CROPS;
+                
+                case "bridge_merged":
+                    return EnumTile.TYPE.BRIDGE;
+                
+                case "villager_merged":
+                    return EnumTile.TYPE.VILLAGER;
+                
+                case "villager_drown_merged":
+                    return EnumTile.TYPE.VILLAGER_DROWNED;
+                
+                case "zombie_merged":
+                    return EnumTile.TYPE.ZOMBIE;
+                
+                case "zombie_drown_merged":
+                    return EnumTile.TYPE.ZOMBIE_DROWNED;
 
                 default:
-                    return -1;
+                    return EnumTile.TYPE.NONE;
 
             }
         }

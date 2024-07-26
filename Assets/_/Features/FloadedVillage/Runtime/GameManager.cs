@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,6 +13,7 @@ namespace FloadedVillage.Runtime
 
         public Tile m_emptyTile;
         public Tile m_waterTile;
+        public Tile m_cropsTile;
         
         public Tilemap m_environmentTilemap;
 	
@@ -44,16 +46,15 @@ namespace FloadedVillage.Runtime
         
         private void DigAt(Vector3Int tilemapCoordinates)
         {
-            Vector3Int arrayCoordinates = _gridGenerator.GetArrayCoordinatesFromPosition(tilemapCoordinates);
+            var arrayCoordinates = _gridGenerator.GetArrayCoordinatesFromPosition(tilemapCoordinates);
 
-            if (_currentLevelTiles[arrayCoordinates.y, arrayCoordinates.x] != 2) return;
+            if (_currentLevelTiles[arrayCoordinates.y, arrayCoordinates.x] != EnumTile.TYPE.SAND) return;
             
             m_environmentTilemap.SetTile(tilemapCoordinates, m_emptyTile);
-            Debug.Log("Tile changed at: " + arrayCoordinates);
-            _currentLevelTiles[arrayCoordinates.y, arrayCoordinates.x] = 0;
-            Debug.Log("Tile in array is now :" + _currentLevelTiles[arrayCoordinates.y, arrayCoordinates.x]);
+            _currentLevelTiles[arrayCoordinates.y, arrayCoordinates.x] = EnumTile.TYPE.EMPTY;
 
             WaterFlow();
+            GrowSeeds();
         }
 
         private void WaterFlow()
@@ -62,10 +63,10 @@ namespace FloadedVillage.Runtime
             {
                 for (int x = 0; x < _currentLevelTiles.GetLength(1); x++)
                 {
-                    if (_currentLevelTiles[y, x] == 0)
+                    if (_currentLevelTiles[y, x] == EnumTile.TYPE.EMPTY)
                     {
-                        var targetAround = CheckAroundForTarget(y, x, 1);
-                        if (targetAround)
+                        bool isWaterAround = CheckAroundForTarget(y, x, EnumTile.TYPE.WATER);
+                        if (isWaterAround)
                         {
                             FillWaterAt(y, x);
                             WaterFlow();
@@ -75,24 +76,48 @@ namespace FloadedVillage.Runtime
                 }
             }
         }
+        
+        private void GrowSeeds()
+        {
+            for (int y = 0; y < _currentLevelTiles.GetLength(0); y++)
+            {
+                for (int x = 0; x < _currentLevelTiles.GetLength(1); x++)
+                {
+                    if (_currentLevelTiles[y, x] == EnumTile.TYPE.SEEDS)
+                    {
+                        bool isWaterAround = CheckAroundForTarget(y, x, EnumTile.TYPE.WATER);
+                        if (isWaterAround)
+                        {
+                            GrowSeedAt(y, x);
+                        }
+                    }
+                }
+            }
+        }
 
         private void FillWaterAt(int arrY, int arrX)
         {
-            _currentLevelTiles[arrY, arrX] = 1;
+            _currentLevelTiles[arrY, arrX] = EnumTile.TYPE.WATER;
             m_environmentTilemap.SetTile(_gridGenerator.GetPositionFromArrayCoordinates(new Vector3Int(arrX, arrY)), m_waterTile);
         }
 
-        private bool CheckAroundForTarget(int arrY, int arrX, int target)
+        private void GrowSeedAt(int arrY, int arrX)
+        {
+            _currentLevelTiles[arrY, arrX] = EnumTile.TYPE.CROPS;
+            m_environmentTilemap.SetTile(_gridGenerator.GetPositionFromArrayCoordinates(new Vector3Int(arrX, arrY)), m_cropsTile);
+        }
+
+        private bool CheckAroundForTarget(int arrY, int arrX, EnumTile.TYPE target)
         {
             Debug.Log($"Check around Tile at [{arrY},{arrX}] = {_currentLevelTiles[arrY, arrX]}");
-            Debug.Log("Left");
+            
             // Check left
             if (arrX - 1 >= 0 && _currentLevelTiles[arrY, arrX - 1] == target)
             {
                 Debug.Log("Found " + target + " left");
                 return true;
             }
-            Debug.Log("Top");
+           
             // Check top
             if (arrY - 1 <= _currentLevelTiles.GetLength(0)
                 && _currentLevelTiles[arrY - 1, arrX] == target)
@@ -100,21 +125,21 @@ namespace FloadedVillage.Runtime
                 Debug.Log("Found " + target + " top");
                 return true;
             }
-            if (arrX + 1 < _currentLevelTiles.GetLength(1) - 1) Debug.Log($"Check Right at [{arrY},{arrX + 1}] = {_currentLevelTiles[arrY, arrX + 1]}");
+            
             // Check right
             if (arrX + 1 < _currentLevelTiles.GetLength(1) - 1 && _currentLevelTiles[arrY, arrX + 1] == target)
             {
                 Debug.Log("Found " + target + " right");
                 return true;
             }
-            Debug.Log("Bot");
+            Debug.Log($"here: [{arrY + 1},{arrX}] ");
             // Check bot
             if (arrY + 1 >= 0 && _currentLevelTiles[arrY + 1, arrX] == target)
             {
                 Debug.Log("Found " + target + " bot");
                 return true;
             }
-
+            
             return false;
         }
 
@@ -126,7 +151,7 @@ namespace FloadedVillage.Runtime
 
         #region Privates & Protected
 
-        private int[,] _currentLevelTiles;
+        private EnumTile.TYPE[,] _currentLevelTiles;
         [SerializeField] private GridGenerator _gridGenerator;
 
         #endregion
