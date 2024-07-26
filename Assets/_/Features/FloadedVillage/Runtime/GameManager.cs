@@ -23,13 +23,12 @@ namespace FloadedVillage.Runtime
     		{
                 _currentLevelTiles = _gridGenerator.m_initialLevelTiles;
 
-                for (int y = 0; y < _currentLevelTiles.GetLength(0); y++)
-                {
-                    for (int x = 0; x < _currentLevelTiles.GetLength(1); x++)
-                    {
-                        Debug.Log($"Tile at ({x},{y}) = {_currentLevelTiles[y, x]}");
-                    }
-                }
+                WaterFlow();
+            }
+
+            void Update()
+            {
+                
             }
             
         #endregion
@@ -54,48 +53,69 @@ namespace FloadedVillage.Runtime
             _currentLevelTiles[arrayCoordinates.y, arrayCoordinates.x] = 0;
             Debug.Log("Tile in array is now :" + _currentLevelTiles[arrayCoordinates.y, arrayCoordinates.x]);
 
-            CheckAroundForWater(arrayCoordinates);
+            WaterFlow();
         }
 
         private void WaterFlow()
         {
-            
+            for (int y = 0; y < _currentLevelTiles.GetLength(0); y++)
+            {
+                for (int x = 0; x < _currentLevelTiles.GetLength(1); x++)
+                {
+                    if (_currentLevelTiles[y, x] == 0)
+                    {
+                        var targetAround = CheckAroundForTarget(y, x, 1);
+                        if (targetAround)
+                        {
+                            FillWaterAt(y, x);
+                            WaterFlow();
+                            break;
+                        }
+                    }
+                }
+            }
         }
 
-        private void FillWaterAt(Vector3Int arrayCoordinates)
+        private void FillWaterAt(int arrY, int arrX)
         {
-            _currentLevelTiles[arrayCoordinates.y, arrayCoordinates.x] = 1;
-            m_environmentTilemap.SetTile(_gridGenerator.GetPositionFromArrayCoordinates(new Vector3Int(arrayCoordinates.x, arrayCoordinates.y, 0)), m_waterTile);
+            _currentLevelTiles[arrY, arrX] = 1;
+            m_environmentTilemap.SetTile(_gridGenerator.GetPositionFromArrayCoordinates(new Vector3Int(arrX, arrY)), m_waterTile);
         }
 
-        private void CheckAroundForWater(Vector3Int arrayCoordinates)
+        private bool CheckAroundForTarget(int arrY, int arrX, int target)
         {
-            Debug.Log("ArrX: " + arrayCoordinates.x + "ArrY: " + arrayCoordinates.y);
+            Debug.Log($"Check around Tile at [{arrY},{arrX}] = {_currentLevelTiles[arrY, arrX]}");
+            Debug.Log("Left");
             // Check left
-            if (arrayCoordinates.x - 1 >= 0 && _currentLevelTiles[arrayCoordinates.y, arrayCoordinates.x - 1] == 1)
+            if (arrX - 1 >= 0 && _currentLevelTiles[arrY, arrX - 1] == target)
             {
-                FillWaterAt(arrayCoordinates);
-                //CheckAroundForWater(new Vector3Int(arrayCoordinates.x - 1, arrayCoordinates.y, 0));
+                Debug.Log("Found " + target + " left");
+                return true;
             }
+            Debug.Log("Top");
             // Check top
-            if (arrayCoordinates.y - 1 <= _currentLevelTiles.GetLength(0)
-                && _currentLevelTiles[arrayCoordinates.y - 1, arrayCoordinates.x] == 1)
+            if (arrY - 1 <= _currentLevelTiles.GetLength(0)
+                && _currentLevelTiles[arrY - 1, arrX] == target)
             {
-                FillWaterAt(arrayCoordinates);
-                //CheckAroundForWater(new Vector3Int(arrayCoordinates.y - 1, arrayCoordinates.x, 0));
+                Debug.Log("Found " + target + " top");
+                return true;
             }
+            if (arrX + 1 < _currentLevelTiles.GetLength(1) - 1) Debug.Log($"Check Right at [{arrY},{arrX + 1}] = {_currentLevelTiles[arrY, arrX + 1]}");
             // Check right
-            if (arrayCoordinates.x + 1 >= 0 && _currentLevelTiles[arrayCoordinates.y, arrayCoordinates.x + 1] == 1)
+            if (arrX + 1 < _currentLevelTiles.GetLength(1) - 1 && _currentLevelTiles[arrY, arrX + 1] == target)
             {
-                FillWaterAt(arrayCoordinates);
-                //CheckAroundForWater(new Vector3Int(arrayCoordinates.x + 1, arrayCoordinates.y, 0));
+                Debug.Log("Found " + target + " right");
+                return true;
             }
+            Debug.Log("Bot");
             // Check bot
-            if (arrayCoordinates.y + 1 >= 0 && _currentLevelTiles[arrayCoordinates.y + 1, arrayCoordinates.x] == 1)
+            if (arrY + 1 >= 0 && _currentLevelTiles[arrY + 1, arrX] == target)
             {
-                FillWaterAt(arrayCoordinates);
-                //CheckAroundForWater(new Vector3Int(arrayCoordinates.x, arrayCoordinates.y + 1, 0));
+                Debug.Log("Found " + target + " bot");
+                return true;
             }
+
+            return false;
         }
 
         #endregion
