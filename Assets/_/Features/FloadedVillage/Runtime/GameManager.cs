@@ -14,6 +14,9 @@ namespace FloadedVillage.Runtime
         public Tile m_emptyTile;
         public Tile m_waterTile;
         public Tile m_cropsTile;
+        public Tile m_bridgeWaterTile;
+        public Tile m_zombieDrownedTile;
+        public Tile m_villagerDrownedTile;
         
         public Tilemap m_environmentTilemap;
 	
@@ -54,6 +57,9 @@ namespace FloadedVillage.Runtime
             _currentLevelTiles[arrayCoordinates.y, arrayCoordinates.x] = EnumTile.TYPE.EMPTY;
 
             WaterFlow();
+            
+            DrownVillagers();
+            DrownZombies();
             GrowSeeds();
         }
 
@@ -63,10 +69,9 @@ namespace FloadedVillage.Runtime
             {
                 for (int x = 0; x < _currentLevelTiles.GetLength(1); x++)
                 {
-                    if (_currentLevelTiles[y, x] == EnumTile.TYPE.EMPTY)
+                    if (_currentLevelTiles[y, x] == EnumTile.TYPE.EMPTY || _currentLevelTiles[y, x] == EnumTile.TYPE.BRIDGE)
                     {
-                        bool isWaterAround = CheckAroundForTarget(y, x, EnumTile.TYPE.WATER);
-                        if (isWaterAround)
+                        if (IsWaterAround(y, x))
                         {
                             FillWaterAt(y, x);
                             WaterFlow();
@@ -85,8 +90,7 @@ namespace FloadedVillage.Runtime
                 {
                     if (_currentLevelTiles[y, x] == EnumTile.TYPE.SEEDS)
                     {
-                        bool isWaterAround = CheckAroundForTarget(y, x, EnumTile.TYPE.WATER);
-                        if (isWaterAround)
+                        if (IsWaterAround(y, x))
                         {
                             GrowSeedAt(y, x);
                         }
@@ -95,16 +99,71 @@ namespace FloadedVillage.Runtime
             }
         }
 
+        private void DrownZombies()
+        {
+            for (int y = 0; y < _currentLevelTiles.GetLength(0); y++)
+            {
+                for (int x = 0; x < _currentLevelTiles.GetLength(1); x++)
+                {
+                    if (_currentLevelTiles[y, x] == EnumTile.TYPE.ZOMBIE)
+                    {
+                        if (IsWaterAround(y, x))
+                        {
+                            DrownZombieAt(y, x);
+                        }
+                    }
+                }
+            }
+        }
+        
+        private void DrownVillagers()
+        {
+            for (int y = 0; y < _currentLevelTiles.GetLength(0); y++)
+            {
+                for (int x = 0; x < _currentLevelTiles.GetLength(1); x++)
+                {
+                    if (_currentLevelTiles[y, x] == EnumTile.TYPE.VILLAGER)
+                    {
+                        if (IsWaterAround(y, x))
+                        {
+                            DrownVillagerAt(y, x);
+                        }
+                    }
+                }
+            }
+        }
+
         private void FillWaterAt(int arrY, int arrX)
         {
-            _currentLevelTiles[arrY, arrX] = EnumTile.TYPE.WATER;
-            m_environmentTilemap.SetTile(_gridGenerator.GetPositionFromArrayCoordinates(new Vector3Int(arrX, arrY)), m_waterTile);
+            if (_currentLevelTiles[arrY, arrX] == EnumTile.TYPE.EMPTY)
+            {
+                _currentLevelTiles[arrY, arrX] = EnumTile.TYPE.WATER;
+                m_environmentTilemap.SetTile(_gridGenerator.GetPositionFromArrayCoordinates(new Vector3Int(arrX, arrY)), m_waterTile);
+            }
+            else
+            {
+                _currentLevelTiles[arrY, arrX] = EnumTile.TYPE.BRIDGE_WATER;
+                m_environmentTilemap.SetTile(_gridGenerator.GetPositionFromArrayCoordinates(new Vector3Int(arrX, arrY)), m_bridgeWaterTile);
+            }
+            
         }
 
         private void GrowSeedAt(int arrY, int arrX)
         {
             _currentLevelTiles[arrY, arrX] = EnumTile.TYPE.CROPS;
             m_environmentTilemap.SetTile(_gridGenerator.GetPositionFromArrayCoordinates(new Vector3Int(arrX, arrY)), m_cropsTile);
+        }
+
+        private void DrownZombieAt(int arrY, int arrX)
+        {
+            _currentLevelTiles[arrY, arrX] = EnumTile.TYPE.ZOMBIE_DROWNED;
+            m_environmentTilemap.SetTile(_gridGenerator.GetPositionFromArrayCoordinates(new Vector3Int(arrX, arrY)), m_zombieDrownedTile);
+        }
+        
+        private void DrownVillagerAt(int arrY, int arrX)
+        {
+            _currentLevelTiles[arrY, arrX] = EnumTile.TYPE.VILLAGER_DROWNED;
+            m_environmentTilemap.SetTile(_gridGenerator.GetPositionFromArrayCoordinates(new Vector3Int(arrX, arrY)), m_villagerDrownedTile);
         }
 
         private bool CheckAroundForTarget(int arrY, int arrX, EnumTile.TYPE target)
@@ -134,13 +193,22 @@ namespace FloadedVillage.Runtime
             }
             Debug.Log($"here: [{arrY + 1},{arrX}] ");
             // Check bot
-            if (arrY + 1 >= 0 && _currentLevelTiles[arrY + 1, arrX] == target)
+            if (arrY + 1 <= _currentLevelTiles.GetLength(0) - 1 && _currentLevelTiles[arrY + 1, arrX] == target)
             {
                 Debug.Log("Found " + target + " bot");
                 return true;
             }
             
             return false;
+        }
+
+        private bool IsWaterAround(int y, int x)
+        {
+            return
+                CheckAroundForTarget(y, x, EnumTile.TYPE.WATER) 
+                || CheckAroundForTarget(y, x, EnumTile.TYPE.BRIDGE_WATER)
+                || CheckAroundForTarget(y, x, EnumTile.TYPE.VILLAGER_DROWNED)
+                || CheckAroundForTarget(y, x, EnumTile.TYPE.ZOMBIE_DROWNED);
         }
 
         #endregion

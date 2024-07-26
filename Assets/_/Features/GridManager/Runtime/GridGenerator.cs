@@ -90,15 +90,21 @@ namespace GridManager.Runtime
 
                 case "sand":
                     return EnumTile.TYPE.SAND;
+                
+                case "stone":
+                    return EnumTile.TYPE.STONE;
 
                 case "seeds":
                     return EnumTile.TYPE.SEEDS;
-
+                
                 case "crops":
                     return EnumTile.TYPE.CROPS;
                 
                 case "bridge_merged":
                     return EnumTile.TYPE.BRIDGE;
+                
+                case "bridge_water_merged":
+                    return EnumTile.TYPE.BRIDGE_WATER;
                 
                 case "villager_merged":
                     return EnumTile.TYPE.VILLAGER;

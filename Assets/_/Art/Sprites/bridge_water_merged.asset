@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 13312, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: zombie
+  m_Name: bridge_water_merged
   m_EditorClassIdentifier: 
-  m_Sprite: {fileID: 21300000, guid: f21bf0fe91485a34dba8de33105f3325, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 5eb36ce5740ad014f9dad2a24b062c08, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Transform:
     e00: 1
