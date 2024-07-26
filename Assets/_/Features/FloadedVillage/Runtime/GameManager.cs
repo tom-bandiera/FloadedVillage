@@ -116,6 +116,8 @@ namespace FloadedVillage.Runtime
                         if (IsWaterAround(y, x))
                         {
                             DrownZombieAt(y, x);
+                            WaterFlow();
+                            break;
                         }
                     }
                 }
@@ -194,7 +196,7 @@ namespace FloadedVillage.Runtime
             }
             
             // Check right
-            if (arrX + 1 < _currentLevelTiles.GetLength(1) - 1 && _currentLevelTiles[arrY, arrX + 1] == target)
+            if (arrX + 1 <= _currentLevelTiles.GetLength(1) - 1 && _currentLevelTiles[arrY, arrX + 1] == target)
             {
                 Debug.Log("Found " + target + " right");
                 return true;
