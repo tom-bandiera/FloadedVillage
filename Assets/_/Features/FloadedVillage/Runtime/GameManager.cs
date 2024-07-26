@@ -11,15 +11,6 @@ namespace FloadedVillage.Runtime
     {
         #region Publics
 
-        public Tile m_emptyTile;
-        public Tile m_waterTile;
-        public Tile m_cropsTile;
-        public Tile m_bridgeWaterTile;
-        public Tile m_zombieDrownedTile;
-        public Tile m_villagerDrownedTile;
-        
-        public Tilemap m_environmentTilemap;
-	
         #endregion
 
         #region Unity API
@@ -27,13 +18,28 @@ namespace FloadedVillage.Runtime
     		void Start()
     		{
                 _currentLevelTiles = _gridGenerator.m_initialLevelTiles;
+                _zombiesLeftCounter = _gridGenerator.m_zombiesCounter;
+                _seedsLeftCounter = _gridGenerator.m_seedsCounter;
 
                 WaterFlow();
             }
 
             void Update()
             {
-                
+                if (!_isGameOver)
+                {
+                    if (!_isLevelComplete && _seedsLeftCounter == 0 && _zombiesLeftCounter == 0)
+                    {
+                        _isLevelComplete = true;
+                        // Invoke Level Complete after 1 sec
+                        _levelManager.LevelCompleted();
+                    }
+                }
+                else
+                {
+                    // Invoke Game Over after 1 sec
+                    _levelManager.GameOver();
+                }
             }
             
         #endregion
@@ -53,7 +59,7 @@ namespace FloadedVillage.Runtime
 
             if (_currentLevelTiles[arrayCoordinates.y, arrayCoordinates.x] != EnumTile.TYPE.SAND) return;
             
-            m_environmentTilemap.SetTile(tilemapCoordinates, m_emptyTile);
+            _environmentTilemap.SetTile(tilemapCoordinates, _emptyTile);
             _currentLevelTiles[arrayCoordinates.y, arrayCoordinates.x] = EnumTile.TYPE.EMPTY;
 
             WaterFlow();
@@ -138,32 +144,34 @@ namespace FloadedVillage.Runtime
             if (_currentLevelTiles[arrY, arrX] == EnumTile.TYPE.EMPTY)
             {
                 _currentLevelTiles[arrY, arrX] = EnumTile.TYPE.WATER;
-                m_environmentTilemap.SetTile(_gridGenerator.GetPositionFromArrayCoordinates(new Vector3Int(arrX, arrY)), m_waterTile);
+                _environmentTilemap.SetTile(_gridGenerator.GetPositionFromArrayCoordinates(new Vector3Int(arrX, arrY)), _waterTile);
             }
             else
             {
                 _currentLevelTiles[arrY, arrX] = EnumTile.TYPE.BRIDGE_WATER;
-                m_environmentTilemap.SetTile(_gridGenerator.GetPositionFromArrayCoordinates(new Vector3Int(arrX, arrY)), m_bridgeWaterTile);
+                _environmentTilemap.SetTile(_gridGenerator.GetPositionFromArrayCoordinates(new Vector3Int(arrX, arrY)), _bridgeWaterTile);
             }
-            
         }
 
         private void GrowSeedAt(int arrY, int arrX)
         {
             _currentLevelTiles[arrY, arrX] = EnumTile.TYPE.CROPS;
-            m_environmentTilemap.SetTile(_gridGenerator.GetPositionFromArrayCoordinates(new Vector3Int(arrX, arrY)), m_cropsTile);
+            _environmentTilemap.SetTile(_gridGenerator.GetPositionFromArrayCoordinates(new Vector3Int(arrX, arrY)), _cropsTile);
+            _seedsLeftCounter--;
         }
 
         private void DrownZombieAt(int arrY, int arrX)
         {
             _currentLevelTiles[arrY, arrX] = EnumTile.TYPE.ZOMBIE_DROWNED;
-            m_environmentTilemap.SetTile(_gridGenerator.GetPositionFromArrayCoordinates(new Vector3Int(arrX, arrY)), m_zombieDrownedTile);
+            _environmentTilemap.SetTile(_gridGenerator.GetPositionFromArrayCoordinates(new Vector3Int(arrX, arrY)), _zombieDrownedTile);
+            _zombiesLeftCounter--;
         }
         
         private void DrownVillagerAt(int arrY, int arrX)
         {
             _currentLevelTiles[arrY, arrX] = EnumTile.TYPE.VILLAGER_DROWNED;
-            m_environmentTilemap.SetTile(_gridGenerator.GetPositionFromArrayCoordinates(new Vector3Int(arrX, arrY)), m_villagerDrownedTile);
+            _environmentTilemap.SetTile(_gridGenerator.GetPositionFromArrayCoordinates(new Vector3Int(arrX, arrY)), _villagerDrownedTile);
+            _isGameOver = true;
         }
 
         private bool CheckAroundForTarget(int arrY, int arrX, EnumTile.TYPE target)
@@ -178,7 +186,7 @@ namespace FloadedVillage.Runtime
             }
            
             // Check top
-            if (arrY - 1 <= _currentLevelTiles.GetLength(0)
+            if (arrY - 1 >= 0
                 && _currentLevelTiles[arrY - 1, arrX] == target)
             {
                 Debug.Log("Found " + target + " top");
@@ -218,9 +226,22 @@ namespace FloadedVillage.Runtime
         #endregion
 
         #region Privates & Protected
-
+        
         private EnumTile.TYPE[,] _currentLevelTiles;
+        private bool _isGameOver;
+        private bool _isLevelComplete;
+        private int _seedsLeftCounter;
+        private int _zombiesLeftCounter;
+        [SerializeField] private UIManager _uiManager;
+        [SerializeField] private LevelManager _levelManager;
         [SerializeField] private GridGenerator _gridGenerator;
+        [SerializeField] private Tile _emptyTile;
+        [SerializeField] private Tile _waterTile;
+        [SerializeField] private Tile _cropsTile;
+        [SerializeField] private Tile _bridgeWaterTile;
+        [SerializeField] private Tile _zombieDrownedTile;
+        [SerializeField] private Tile _villagerDrownedTile;
+        [SerializeField] private Tilemap _environmentTilemap;
 
         #endregion
     }

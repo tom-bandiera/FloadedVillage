@@ -12,6 +12,8 @@ namespace GridManager.Runtime
         
         public Tilemap m_environmentTilemap;
         public EnumTile.TYPE[,] m_initialLevelTiles;
+        public int m_zombiesCounter;
+        public int m_seedsCounter;
 
         #endregion
 
@@ -43,11 +45,19 @@ namespace GridManager.Runtime
 
                     EnumTile.TYPE tileValue = GetTileValue(tilemapTile.name);
 
+                    switch (tileValue)
+                    {
+                        case(EnumTile.TYPE.ZOMBIE):
+                            m_zombiesCounter++;
+                            break;
+                        case(EnumTile.TYPE.SEEDS):
+                            m_seedsCounter++;
+                            break;
+                    }
+
                     m_initialLevelTiles[y, x] = tileValue;
                 }
             }
-            
-            PrintArray();
         }
 
         #endregion
