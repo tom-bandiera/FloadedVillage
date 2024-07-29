@@ -405,6 +405,42 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 269116835}
+    - target: {fileID: 5199838895840043252, guid: 0fdb5e32aee17cc4197f594eac6f62a4, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7804306642806528698, guid: 0fdb5e32aee17cc4197f594eac6f62a4, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7804306642806528698, guid: 0fdb5e32aee17cc4197f594eac6f62a4, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7804306642806528698, guid: 0fdb5e32aee17cc4197f594eac6f62a4, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7804306642806528698, guid: 0fdb5e32aee17cc4197f594eac6f62a4, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8405962955885828172, guid: 0fdb5e32aee17cc4197f594eac6f62a4, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8405962955885828172, guid: 0fdb5e32aee17cc4197f594eac6f62a4, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8405962955885828172, guid: 0fdb5e32aee17cc4197f594eac6f62a4, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8405962955885828172, guid: 0fdb5e32aee17cc4197f594eac6f62a4, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9214272215318476736, guid: 0fdb5e32aee17cc4197f594eac6f62a4, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -428,8 +464,8 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 501642908217544082, guid: 2c5d68bce5cadbf42ba38c81cf8e02d8, type: 3}
       propertyPath: _nextLevel
-      value: 
-      objectReference: {fileID: 102900000, guid: 8c9cfa26abfee488c85f1582747f6a02, type: 3}
+      value: Level-01
+      objectReference: {fileID: 0}
     - target: {fileID: 501642908217544082, guid: 2c5d68bce5cadbf42ba38c81cf8e02d8, type: 3}
       propertyPath: _uiManager
       value: 

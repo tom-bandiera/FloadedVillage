@@ -1,8 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using log4net.Core;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -22,6 +20,10 @@ namespace FloadedVillage.Runtime
 	        if (SceneManager.GetActiveScene().name == "MainMenu")
 	        {
 		        _uiManager.ShowMainMenu();
+	        }
+	        else
+	        {
+		        _uiManager.ShowHUD();
 	        }
         }
 		
@@ -49,7 +51,7 @@ namespace FloadedVillage.Runtime
         
         public void NextLevel()
         {
-	        SceneManager.LoadScene(_nextLevel.name);
+	        SceneManager.LoadScene(_nextLevel);
 	        Time.timeScale = 1f;
         }
         
@@ -64,7 +66,7 @@ namespace FloadedVillage.Runtime
 	
         #endregion
 
-        [SerializeField] private SceneAsset _nextLevel;
+        [SerializeField] private string _nextLevel;
         [SerializeField] private UIManager _uiManager;
 
         #region Privates & Protected

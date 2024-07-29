@@ -83,7 +83,7 @@ namespace GridManager.Runtime
             {
                 for (int x = 0; x < m_initialLevelTiles.GetLength(1); x++)
                 {
-                    Debug.Log($"Tile at [{y},{x}] = {m_initialLevelTiles[y, x]}");
+                    // Debug.Log($"Tile at [{y},{x}] = {m_initialLevelTiles[y, x]}");
                 }
             }
         }

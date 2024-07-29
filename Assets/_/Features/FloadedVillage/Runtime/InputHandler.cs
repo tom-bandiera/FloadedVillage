@@ -30,8 +30,6 @@ namespace FloadedVillage.Runtime
 
                 Vector3Int cellPosition = Vector3Int.FloorToInt(m_environmentTilemap.WorldToCell(worldPosition));
 
-                Debug.Log($"Cell Position: {cellPosition}");
-
                 m_onTileClicked.Invoke(cellPosition);
             }
         }

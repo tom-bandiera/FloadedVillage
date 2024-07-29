@@ -426,6 +426,14 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1299054292}
     - target: {fileID: 1523692407329467826, guid: 31ccd770d88a4af4990244d1d68cd951, type: 3}
+      propertyPath: _hudManager
+      value: 
+      objectReference: {fileID: 1299054293}
+    - target: {fileID: 1523692407329467826, guid: 31ccd770d88a4af4990244d1d68cd951, type: 3}
+      propertyPath: _maxActions
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 1523692407329467826, guid: 31ccd770d88a4af4990244d1d68cd951, type: 3}
       propertyPath: _levelManager
       value: 
       objectReference: {fileID: 839213022}
@@ -507,8 +515,8 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 501642908217544082, guid: 2c5d68bce5cadbf42ba38c81cf8e02d8, type: 3}
       propertyPath: _nextLevel
-      value: 
-      objectReference: {fileID: 102900000, guid: 98b3b6ccf63df474cbaf2f54234c5bdc, type: 3}
+      value: Level-04
+      objectReference: {fileID: 0}
     - target: {fileID: 501642908217544082, guid: 2c5d68bce5cadbf42ba38c81cf8e02d8, type: 3}
       propertyPath: _uiManager
       value: 
@@ -847,6 +855,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 67c1319389e6f2546ba3faf921485458, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1299054293 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5360413692850496575, guid: 0fdb5e32aee17cc4197f594eac6f62a4, type: 3}
+  m_PrefabInstance: {fileID: 1299054291}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9c69176943aa0f47a5dc2ff8c44f793, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1445484970

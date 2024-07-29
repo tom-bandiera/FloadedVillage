@@ -53,6 +53,16 @@ namespace FloadedVillage.Runtime
         {
 	        _gameOverMenu.SetActive(false);
         }
+
+        public void ShowHUD()
+        {
+	        _hud.SetActive(true);
+        }
+
+        public void UpdateCurrentActions(int currentActions)
+        {
+	        
+        }
 	
         #endregion
 
@@ -65,6 +75,7 @@ namespace FloadedVillage.Runtime
         [SerializeField] private GameObject _mainMenu;
         [SerializeField] private GameObject _levelCompletedMenu;
         [SerializeField] private GameObject _gameOverMenu;
+        [SerializeField] private GameObject _hud;
 
         #endregion
     }

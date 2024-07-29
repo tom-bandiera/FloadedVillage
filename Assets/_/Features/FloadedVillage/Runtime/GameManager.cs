@@ -20,26 +20,14 @@ namespace FloadedVillage.Runtime
                 _currentLevelTiles = _gridGenerator.m_initialLevelTiles;
                 _zombiesLeftCounter = _gridGenerator.m_zombiesCounter;
                 _seedsLeftCounter = _gridGenerator.m_seedsCounter;
+                _hudManager.UpdateCurrentActions(_actionsCounter, _maxActions);
 
                 WaterFlow();
             }
 
             void Update()
             {
-                if (!_isGameOver)
-                {
-                    if (!_isLevelComplete && _seedsLeftCounter == 0 && _zombiesLeftCounter == 0)
-                    {
-                        _isLevelComplete = true;
-                        // Invoke Level Complete after 1 sec
-                        _levelManager.LevelCompleted();
-                    }
-                }
-                else
-                {
-                    // Invoke Game Over after 1 sec
-                    _levelManager.GameOver();
-                }
+                
             }
             
         #endregion
@@ -48,9 +36,16 @@ namespace FloadedVillage.Runtime
 
         public void OnTileClicked(Vector3 vector)
         {
-            Vector3Int tilemapCoordinates = new Vector3Int((int)vector.x, (int)vector.y, 0);
+            if (_isGameOver) return;
             
+            Vector3Int tilemapCoordinates = new Vector3Int((int)vector.x, (int)vector.y, 0);
             DigAt(tilemapCoordinates);
+        }
+
+        private void NewAction()
+        {
+            _actionsCounter++;
+            _hudManager.UpdateCurrentActions(_actionsCounter, _maxActions);
         }
         
         private void DigAt(Vector3Int tilemapCoordinates)
@@ -58,7 +53,8 @@ namespace FloadedVillage.Runtime
             var arrayCoordinates = _gridGenerator.GetArrayCoordinatesFromPosition(tilemapCoordinates);
 
             if (_currentLevelTiles[arrayCoordinates.y, arrayCoordinates.x] != EnumTile.TYPE.SAND) return;
-            
+
+            NewAction();
             _environmentTilemap.SetTile(tilemapCoordinates, _emptyTile);
             _currentLevelTiles[arrayCoordinates.y, arrayCoordinates.x] = EnumTile.TYPE.EMPTY;
 
@@ -67,6 +63,21 @@ namespace FloadedVillage.Runtime
             DrownVillagers();
             DrownZombies();
             GrowSeeds();
+            
+            if (!_isGameOver)
+            {
+                if (!_isLevelComplete && _seedsLeftCounter == 0 && _zombiesLeftCounter == 0)
+                {
+                    _isLevelComplete = true;
+                    // Invoke Level Complete after 1 sec
+                    _levelManager.LevelCompleted();
+                    _actionsCounter = 0;
+                } else if (_actionsCounter >= _maxActions)
+                {
+                    _isGameOver = true;
+                    _levelManager.GameOver();
+                }
+            }
         }
 
         private void WaterFlow()
@@ -178,12 +189,9 @@ namespace FloadedVillage.Runtime
 
         private bool CheckAroundForTarget(int arrY, int arrX, EnumTile.TYPE target)
         {
-            Debug.Log($"Check around Tile at [{arrY},{arrX}] = {_currentLevelTiles[arrY, arrX]}");
-            
             // Check left
             if (arrX - 1 >= 0 && _currentLevelTiles[arrY, arrX - 1] == target)
             {
-                Debug.Log("Found " + target + " left");
                 return true;
             }
            
@@ -191,21 +199,18 @@ namespace FloadedVillage.Runtime
             if (arrY - 1 >= 0
                 && _currentLevelTiles[arrY - 1, arrX] == target)
             {
-                Debug.Log("Found " + target + " top");
                 return true;
             }
             
             // Check right
             if (arrX + 1 <= _currentLevelTiles.GetLength(1) - 1 && _currentLevelTiles[arrY, arrX + 1] == target)
             {
-                Debug.Log("Found " + target + " right");
                 return true;
             }
-            Debug.Log($"here: [{arrY + 1},{arrX}] ");
+
             // Check bot
             if (arrY + 1 <= _currentLevelTiles.GetLength(0) - 1 && _currentLevelTiles[arrY + 1, arrX] == target)
             {
-                Debug.Log("Found " + target + " bot");
                 return true;
             }
             
@@ -234,7 +239,10 @@ namespace FloadedVillage.Runtime
         private bool _isLevelComplete;
         private int _seedsLeftCounter;
         private int _zombiesLeftCounter;
+        private int _actionsCounter;
+        [SerializeField] private int _maxActions;
         [SerializeField] private UIManager _uiManager;
+        [SerializeField] private HUDManager _hudManager;
         [SerializeField] private LevelManager _levelManager;
         [SerializeField] private GridGenerator _gridGenerator;
         [SerializeField] private Tile _emptyTile;
